@@ -1,0 +1,61 @@
+import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import dayjs from "dayjs";
+import "./App.css";
+
+export default function App() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { id: uuidv4(), text: "Hi! How can I help you?", from: "bot", time: dayjs().format("HH:mm") }
+  ]);
+  const [input, setInput] = useState("");
+
+  const sendMessage = () => {
+    if (!input.trim()) return;
+
+    const userMsg = { id: uuidv4(), text: input, from: "user", time: dayjs().format("HH:mm") };
+    setMessages(prev => [...prev, userMsg]);
+    setInput("");
+
+    // Fake bot reply
+    setTimeout(() => {
+      setMessages(prev => [...prev, { id: uuidv4(), text: "This is a bot reply!", from: "bot", time: dayjs().format("HH:mm") }]);
+    }, 800);
+  };
+
+  return (
+    <>
+      {/* Floating Chat Button */}
+      <div className="chat-button" onClick={() => setIsOpen(!isOpen)}>
+        💬
+      </div>
+
+      {/* Popup Chat Window */}
+      {isOpen && (
+        <div className="chat-popup">
+          <div className="chat-header">
+            <span>Chat with us</span>
+            <button onClick={() => setIsOpen(false)}>✖</button>
+          </div>
+          <div className="chat-body">
+            {messages.map(m => (
+              <div key={m.id} className={`message ${m.from}`}>
+                <div className="msg-text">{m.text}</div>
+                <div className="msg-time">{m.time}</div>
+              </div>
+            ))}
+          </div>
+          <div className="chat-input">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              placeholder="Type a message..."
+            />
+            <button onClick={sendMessage}>Send</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
