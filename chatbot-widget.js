@@ -82,7 +82,7 @@
     setTimeout(() => {
       injectWidget();
       startObserver();
-    }, 2000); // wait 2s after DOM ready
+    }, 10000); // wait 10s after DOM ready
   }
 
   if (document.readyState === "complete" || document.readyState === "interactive") {
