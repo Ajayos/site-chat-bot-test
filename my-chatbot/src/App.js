@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import dayjs from "dayjs";
 import "./App.css";
 
 export default function App() {
-  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { id: uuidv4(), text: "Hi! How can I help you?", from: "bot", time: dayjs().format("HH:mm") }
+    {
+      id: uuidv4(),
+      text: "👋 Welcome! Start chatting with us or visit our site.",
+      from: "bot",
+      time: dayjs().format("HH:mm"),
+      isWelcome: true
+    }
   ]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const chatBodyRef = useRef(null);
 
   const sendMessage = () => {
     if (!input.trim()) return;
@@ -17,59 +24,78 @@ export default function App() {
     setMessages(prev => [...prev, userMsg]);
     setInput("");
 
-    // Fake bot reply
+    // Show typing animation
+    setIsTyping(true);
+
+    // Fake bot reply after delay
     setTimeout(() => {
+      setIsTyping(false);
       setMessages(prev => [
         ...prev,
-        { id: uuidv4(), text: "This is a bot reply!", from: "bot", time: dayjs().format("HH:mm") }
+        {
+          id: uuidv4(),
+          text: "This is a bot reply!",
+          from: "bot",
+          time: dayjs().format("HH:mm")
+        }
       ]);
-    }, 800);
+    }, 1500);
   };
 
-  return (
-    <>
-      {/* Welcome Card */}
-      {!isOpen && (
-        <div className="welcome-card">
-          <h2>Welcome</h2>
-          <p>Start chatting or visit our site</p>
-          <div className="welcome-buttons">
-            <button className="chat-now-btn" onClick={() => setIsOpen(true)}>
-              💬 Chat Now
-            </button>
-            <a href="https://ajayos.in/contact" target="_blank" rel="noopener noreferrer" className="contact-btn">
-              📞 Contact Us
-            </a>
-          </div>
-        </div>
-      )}
+  // Auto-scroll to latest message
+  useEffect(() => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
+  }, [messages, isTyping]);
 
-      {/* Popup Chat Window */}
-      {isOpen && (
-        <div className="chat-popup">
-          <div className="chat-header">
-            <span>Chat with us</span>
-            <button onClick={() => setIsOpen(false)}>✖</button>
+  return (
+    <div className="chat-fullscreen">
+      <div className="chat-header">
+        <span>💬 Chat with us</span>
+      </div>
+
+      <div className="chat-body" ref={chatBodyRef}>
+        {messages.map(m => (
+          <div key={m.id} className={`message ${m.from}`}>
+            <div className="msg-text">
+              {m.text}
+              {m.isWelcome && (
+                <div className="welcome-buttons">
+                  <a href="https://ajayos.in" target="_blank" rel="noopener noreferrer" className="chat-now-btn">
+                    🌐 Visit Site
+                  </a>
+                  <a href="https://ajayos.in" target="_blank" rel="noopener noreferrer" className="contact-btn">
+                    📞 Contact Us
+                  </a>
+                </div>
+              )}
+            </div>
+            <div className="msg-time">{m.time}</div>
           </div>
-          <div className="chat-body">
-            {messages.map(m => (
-              <div key={m.id} className={`message ${m.from}`}>
-                <div className="msg-text">{m.text}</div>
-                <div className="msg-time">{m.time}</div>
-              </div>
-            ))}
+        ))}
+
+        {/* Typing Animation */}
+        {isTyping && (
+          <div className="message bot">
+            <div className="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
           </div>
-          <div className="chat-input">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              placeholder="Type a message..."
-            />
-            <button onClick={sendMessage}>Send</button>
-          </div>
-        </div>
-      )}
-    </>
+        )}
+      </div>
+
+      <div className="chat-input">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Type a message..."
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
+    </div>
   );
 }
