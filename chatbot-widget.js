@@ -1,8 +1,13 @@
 (function () {
   const CHAT_URL = "https://ajayos.in/site-chat-bot-test/build/";
 
-  function initWidget() {
-    console.log("[Chatbot] Initializing widget...");
+  function injectWidget() {
+    if (document.querySelector(".chatbot-btn") || document.querySelector(".chatbot-frame")) {
+      console.log("[Chatbot] Widget already exists, skipping inject.");
+      return;
+    }
+
+    console.log("[Chatbot] Injecting widget...");
 
     // Create style
     const style = document.createElement("style");
@@ -32,7 +37,7 @@
         border-radius: 10px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         z-index: 99999;
-        display: block; /* make visible for testing */
+        display: none;
       }
     `;
     document.head.appendChild(style);
@@ -59,9 +64,22 @@
     console.log("[Chatbot] Widget added to page.");
   }
 
-  // Wait for DOM ready to prevent Angular/React overwriting
+  function initWidget() {
+    console.log("[Chatbot] Waiting for full page load...");
+
+    // Wait a bit after page load to avoid Angular/React overwrites
+    setTimeout(() => {
+      injectWidget();
+
+      // Keep checking every 3 seconds to re-inject if DOM changes
+      setInterval(() => {
+        injectWidget();
+      }, 3000);
+    }, 2000); // 2 second delay after DOM ready
+  }
+
   if (document.readyState === "complete" || document.readyState === "interactive") {
-    setTimeout(initWidget, 300);
+    initWidget();
   } else {
     document.addEventListener("DOMContentLoaded", initWidget);
   }
