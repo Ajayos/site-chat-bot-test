@@ -6,9 +6,9 @@
       return; // already there
     }
 
-    console.log("[Chatbot] Injecting widget...");
+    console.log("[Chatbot] Injecting movable button + fixed chat...");
 
-    // Style
+    // Styles
     if (!document.getElementById("chatbot-style")) {
       const style = document.createElement("style");
       style.id = "chatbot-style";
@@ -24,9 +24,13 @@
           font-size: 28px;
           border: none;
           border-radius: 50%;
-          cursor: pointer;
+          cursor: grab;
           box-shadow: 0 4px 10px rgba(0,0,0,0.2);
           z-index: 99999;
+          user-select: none;
+        }
+        .chatbot-btn:active {
+          cursor: grabbing;
         }
         .chatbot-frame {
           position: fixed;
@@ -37,7 +41,7 @@
           border: none;
           border-radius: 10px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-          z-index: 99999;
+          z-index: 99998;
           display: none;
         }
       `;
@@ -45,25 +49,57 @@
       console.log("[Chatbot] Styles injected.");
     }
 
-    // Iframe
+    // Iframe (Fixed Position)
     const iframe = document.createElement("iframe");
     iframe.className = "chatbot-frame";
     iframe.src = CHAT_URL;
     iframe.onload = () => console.log("[Chatbot] Iframe loaded:", CHAT_URL);
     document.body.appendChild(iframe);
 
-    // Button
+    // Button (Movable)
     const button = document.createElement("button");
     button.className = "chatbot-btn";
     button.innerHTML = "💬";
-    button.onclick = () => {
-      const isHidden = iframe.style.display === "none";
-      iframe.style.display = isHidden ? "block" : "none";
-      console.log(`[Chatbot] Chat ${isHidden ? "opened" : "closed"}`);
-    };
     document.body.appendChild(button);
 
-    console.log("[Chatbot] Widget added to page.");
+    // Toggle chat visibility
+    button.addEventListener("click", (e) => {
+      if (e.detail === 0) return; // ignore drag clicks
+      const isHidden = iframe.style.display === "none" || iframe.style.display === "";
+      iframe.style.display = isHidden ? "block" : "none";
+      console.log(`[Chatbot] Chat ${isHidden ? "opened" : "closed"}`);
+    });
+
+    // Dragging logic for button only
+    let offsetX, offsetY, isDragging = false;
+
+    button.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - button.getBoundingClientRect().left;
+      offsetY = e.clientY - button.getBoundingClientRect().top;
+      button.style.transition = "none";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      let left = e.clientX - offsetX;
+      let top = e.clientY - offsetY;
+      left = Math.max(0, Math.min(window.innerWidth - button.offsetWidth, left));
+      top = Math.max(0, Math.min(window.innerHeight - button.offsetHeight, top));
+      button.style.left = left + "px";
+      button.style.top = top + "px";
+      button.style.right = "auto";
+      button.style.bottom = "auto";
+    });
+
+    document.addEventListener("mouseup", () => {
+      if (isDragging) {
+        isDragging = false;
+        button.style.transition = "all 0.2s";
+      }
+    });
+
+    console.log("[Chatbot] Movable button + fixed chat added.");
   }
 
   function startObserver() {
@@ -82,7 +118,7 @@
     setTimeout(() => {
       injectWidget();
       startObserver();
-    }, 10000); // wait 10s after DOM ready
+    }, 2000); // wait 2s
   }
 
   if (document.readyState === "complete" || document.readyState === "interactive") {

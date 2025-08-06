@@ -75,7 +75,7 @@
   font-size: 14px;
 }
 
-/* Welcome buttons inside bot message */
+/* Welcome Buttons */
 .welcome-buttons {
   display: flex;
   flex-direction: column;
@@ -88,9 +88,9 @@
   border-radius: 6px;
   text-align: center;
   color: white;
-  text-decoration: none;
+  border: none;
+  cursor: pointer;
   font-size: 14px;
-  display: block;
 }
 .chat-now-btn {
   background: #007bff;
@@ -99,7 +99,13 @@
   background: #28a745;
 }
 
-/* Typing Dots Animation */
+/* Clicked State */
+.clicked {
+  background: brown !important;
+  cursor: not-allowed;
+}
+
+/* Typing Animation */
 .typing-dots {
   background: #f1f1f1;
   padding: 6px 10px;
@@ -133,7 +139,7 @@
   }
 }
 
-/* Responsive for mobile */
+/* Responsive */
 @media (max-width: 600px) {
   .chat-fullscreen {
     font-size: 14px;

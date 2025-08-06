@@ -7,7 +7,7 @@ export default function App() {
   const [messages, setMessages] = useState([
     {
       id: uuidv4(),
-      text: "👋 Welcome! Start chatting with us or visit our site.",
+      text: "👋 Welcome! Start chatting with us or choose an option below.",
       from: "bot",
       time: dayjs().format("HH:mm"),
       isWelcome: true
@@ -15,14 +15,19 @@ export default function App() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [clickedButtons, setClickedButtons] = useState({
+    site: false,
+    contact: false
+  });
   const chatBodyRef = useRef(null);
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
+  const sendMessage = (text = null) => {
+    const msgText = text || input;
+    if (!msgText.trim()) return;
 
-    const userMsg = { id: uuidv4(), text: input, from: "user", time: dayjs().format("HH:mm") };
+    const userMsg = { id: uuidv4(), text: msgText, from: "user", time: dayjs().format("HH:mm") };
     setMessages(prev => [...prev, userMsg]);
-    setInput("");
+    if (!text) setInput("");
 
     // Show typing animation
     setIsTyping(true);
@@ -34,12 +39,26 @@ export default function App() {
         ...prev,
         {
           id: uuidv4(),
-          text: "This is a bot reply!",
+          text: `Bot received: "${msgText}"`,
           from: "bot",
           time: dayjs().format("HH:mm")
         }
       ]);
     }, 1500);
+  };
+
+  const handleButtonClick = (type) => {
+    if (clickedButtons[type]) return; // already clicked
+
+    setClickedButtons(prev => ({ ...prev, [type]: true }));
+
+    if (type === "site") {
+      window.open("https://vitejs.dev/", "_blank");
+      sendMessage("🌐 Visited Vite site");
+    } else if (type === "contact") {
+      window.open("https://ajayos.in/contact", "_blank");
+      sendMessage("📞 Opened Contact Page");
+    }
   };
 
   // Auto-scroll to latest message
@@ -62,12 +81,20 @@ export default function App() {
               {m.text}
               {m.isWelcome && (
                 <div className="welcome-buttons">
-                  <a href="https://ajayos.in" target="_blank" rel="noopener noreferrer" className="chat-now-btn">
-                    🌐 Visit Site
-                  </a>
-                  <a href="https://ajayos.in" target="_blank" rel="noopener noreferrer" className="contact-btn">
+                  <button
+                    className={`chat-now-btn ${clickedButtons.site ? "clicked" : ""}`}
+                    onClick={() => handleButtonClick("site")}
+                    disabled={clickedButtons.site}
+                  >
+                    🌐 Visit Vite Site
+                  </button>
+                  <button
+                    className={`contact-btn ${clickedButtons.contact ? "clicked" : ""}`}
+                    onClick={() => handleButtonClick("contact")}
+                    disabled={clickedButtons.contact}
+                  >
                     📞 Contact Us
-                  </a>
+                  </button>
                 </div>
               )}
             </div>
@@ -94,7 +121,7 @@ export default function App() {
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder="Type a message..."
         />
-        <button onClick={sendMessage}>Send</button>
+        <button onClick={() => sendMessage()}>Send</button>
       </div>
     </div>
   );
