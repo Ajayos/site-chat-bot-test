@@ -132,7 +132,11 @@ app.post("/api/media", upload.single("file"), (req, res) => {
 app.post("/api/config", (req, res) => {
   // console.log(`🔧 Config update request received for domain: ${req_domain}`);
   var domain_from_web = req?.body?.domain || "";
-  console.log(`🔧 Config update request received for domain: ${req.body}`);
+  domain_from_web = domain_from_web.replace(/\/$/, ""); // Remove trailing slash
+  domain_from_web = domain_from_web.replace(/^https?:\/\//, ""); // Remove protocol
+  console.log(
+    `🔧 Config update request received for domain: ${domain_from_web}`
+  );
   if (!domain_from_web) {
     return res.status(400).json({ error: "Missing domain." });
   }
