@@ -19,12 +19,12 @@ function ChatShell() {
       try {
         // Step 1: Get API URL from public/config.json
         const { API_URL } = await loadConfig();
-        console.log(window.location.origin);
+        console.log(document.referrer);
 
         // Step 2: Fetch backend config and body have window.location
         const res = await fetch(`${API_URL}api/config`, {
           method: "POST",
-          body: JSON.stringify({ domain: window.location.origin }),
+          body: JSON.stringify({ domain: document.referrer }),
         });
         const data = await res.json();
 

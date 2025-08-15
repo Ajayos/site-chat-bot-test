@@ -1,5 +1,16 @@
 (function () {
   const CHAT_URL = "https://ajayos.in/site-chat-bot-test/www/build/";
+  const API_BACKEND = "http://localhost:5000";
+
+  function collectConfig() {
+    return fetch(`${API_BACKEND}api/config`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ domain: window.location.origin }),
+    }).then((res) => res.json());
+  }
 
   function injectWidget() {
     if (
@@ -93,11 +104,11 @@
       let top = e.clientY - offsetY;
       left = Math.max(
         0,
-        Math.min(window.innerWidth - button.offsetWidth, left),
+        Math.min(window.innerWidth - button.offsetWidth, left)
       );
       top = Math.max(
         0,
-        Math.min(window.innerHeight - button.offsetHeight, top),
+        Math.min(window.innerHeight - button.offsetHeight, top)
       );
       button.style.left = left + "px";
       button.style.top = top + "px";
