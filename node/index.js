@@ -38,6 +38,52 @@ app.post("/api/chat", (req, res) => {
 
   // Pick a random example to send back
   let reply = getRandomMessage();
+
+  let reply2 = {
+    from: "bot",
+    type: "interactive",
+    interactive: {
+      type: "image", // custom grouping
+      header: {
+        url: "https://github.com/Ajayos.png",
+      },
+      body: "Choose an option:",
+      footer: "Tap any button to continue",
+      buttons: [
+        {
+          type: "reply",
+          reply: { title: "✅ Confirm", id: "confirm_123" },
+        },
+        {
+          type: "url",
+          url: { title: "🌐 Visit Website", payload: "https://example.com" },
+        },
+        {
+          type: "otp",
+          otp: { code: "123456" },
+        },
+        {
+          type: "email",
+          email: { title: "📧 Email Support", payload: "support@example.com" },
+        },
+        {
+          type: "number",
+          number: { title: "📞 Call Us", placeholder: "+1 555 123 4567" },
+        },
+        {
+          type: "location",
+          location: {
+            title: "📍 View Location",
+            name: "Kochi Office",
+            address: "MG Road, Kochi, Kerala, India",
+            latitude: 9.9312,
+            longitude: 76.2673,
+          },
+        },
+      ],
+    },
+  };
+
   reply = {
     ...reply,
     id: randomUUID(),

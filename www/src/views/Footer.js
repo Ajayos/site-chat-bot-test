@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -24,8 +24,23 @@ export default function Footer({ onSendMedia }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const fileInputRef = useRef(null);
   const fileTypeRef = useRef(null);
+  const pickerRef = useRef(null);
 
-  // Send typed message
+  // Close emoji picker on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(e.target) &&
+        e.target.id !== "emoji-btn"
+      ) {
+        setEmojiVisible(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleSend = () => {
     if (!message.trim()) return;
     sendMessage({
@@ -38,18 +53,11 @@ export default function Footer({ onSendMedia }) {
     setMessage("");
   };
 
-  // Handle emoji selection
-  const handleEmojiSelect = (emoji) => {
-    setMessage((prev) => prev + emoji.emoji);
-  };
+  const handleEmojiSelect = (emoji) => setMessage((prev) => prev + emoji.emoji);
 
-  // Open media menu
-  const handleAddClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleAddClick = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  // Handle media item selection
   const handleMediaSelect = (type) => {
     fileTypeRef.current = type;
     if (type === "sticker") {
@@ -60,7 +68,6 @@ export default function Footer({ onSendMedia }) {
     handleMenuClose();
   };
 
-  // Handle file input change
   const handleFileChange = async (event) => {
     event.preventDefault();
     const file = event.target.files?.[0];
@@ -94,7 +101,7 @@ export default function Footer({ onSendMedia }) {
       const data = await response.json();
       const mediaId = data.mediaId;
 
-      const msg = {
+      sendMessage({
         id: nanoid(),
         from: "user",
         type,
@@ -105,14 +112,12 @@ export default function Footer({ onSendMedia }) {
           filename: file.name,
         },
         ts: new Date().toISOString(),
-      };
-
-      sendMessage(msg);
+      });
     } catch (err) {
       console.error("Failed to upload media:", err);
     }
 
-    event.target.value = ""; // reset input
+    event.target.value = "";
   };
 
   return (
@@ -126,25 +131,30 @@ export default function Footer({ onSendMedia }) {
     >
       {/* Emoji Picker Button */}
       <Tooltip title="Emoji">
-        <IconButton onClick={() => setEmojiVisible((prev) => !prev)}>
+        <IconButton
+          id="emoji-btn"
+          onClick={() => setEmojiVisible((prev) => !prev)}
+        >
           <InsertEmoticonIcon sx={{ color: "#555" }} />
         </IconButton>
       </Tooltip>
 
-      {/* Emoji Picker Dropdown */}
-      {emojiVisible && (
-        <Box
-          position="absolute"
-          bottom="50px"
-          left="10px"
-          zIndex={10}
-          bgcolor="#fff"
-          boxShadow={3}
-          borderRadius={2}
-        >
-          <EmojiPicker onEmojiClick={handleEmojiSelect} />
-        </Box>
-      )}
+      {/* Emoji Picker Dropdown (always mounted, toggle visibility) */}
+      <Box
+        ref={pickerRef}
+        sx={{
+          position: "absolute",
+          bottom: "50px",
+          left: "10px",
+          zIndex: 10,
+          display: emojiVisible ? "block" : "none",
+          bgcolor: "#fff",
+          boxShadow: 3,
+          borderRadius: 2,
+        }}
+      >
+        <EmojiPicker onEmojiClick={handleEmojiSelect} />
+      </Box>
 
       {/* Add Media Button */}
       <Tooltip title="Add Media">
@@ -165,9 +175,7 @@ export default function Footer({ onSendMedia }) {
         <MenuItem onClick={() => handleMediaSelect("document")}>
           Document
         </MenuItem>
-        <MenuItem onClick={() => handleMediaSelect("sticker")}>
-          Sticker
-        </MenuItem>
+        <MenuItem onClick={() => handleMediaSelect("sticker")}>Sticker</MenuItem>
       </Menu>
 
       {/* Hidden File Input */}
@@ -189,7 +197,7 @@ export default function Footer({ onSendMedia }) {
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            e.preventDefault(); // prevent form submission
+            e.preventDefault();
             handleSend();
           }
         }}

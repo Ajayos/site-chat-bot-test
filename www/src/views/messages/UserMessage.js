@@ -5,6 +5,10 @@ import { motion, useAnimation } from "framer-motion";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
@@ -52,18 +56,18 @@ export default function UserMessage({ message, ts, config }) {
   };
   const handleCloseMenu = () => setMenuAnchor(null);
 
-  // Reusable functions
+  // Clipboard copy
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text || "");
     handleCloseMenu();
   };
 
+  // File download
   const downloadFile = async (url, name = false) => {
     try {
-      const fileName = name || url.split("/").pop(); // Extract filename from URL
+      const fileName = name || url.split("/").pop();
       const response = await fetch(url);
       if (!response.ok) throw new Error("Failed to fetch file");
-
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
 
@@ -73,8 +77,7 @@ export default function UserMessage({ message, ts, config }) {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      URL.revokeObjectURL(blobUrl); // Clean up
+      URL.revokeObjectURL(blobUrl);
       handleCloseMenu();
     } catch (err) {
       console.error("Download failed:", err);
@@ -100,6 +103,7 @@ export default function UserMessage({ message, ts, config }) {
               ref={emojiRef}
               animate={controls}
               style={{ display: "inline-block" }}
+              onContextMenu={handleContextMenu} // enable right-click
             >
               <Typography
                 variant="h3"
@@ -110,7 +114,11 @@ export default function UserMessage({ message, ts, config }) {
             </motion.div>
           );
         }
-        return message.text?.body || "";
+        return (
+          <Typography onContextMenu={handleContextMenu}>
+            {message.text?.body}
+          </Typography>
+        );
 
       case "image":
         return (
@@ -203,21 +211,28 @@ export default function UserMessage({ message, ts, config }) {
     wordBreak: "break-word",
   };
 
-  // Right-click menu items
-  const menuItems = [];
   const copyText =
     message.text?.body ||
     message.image?.caption ||
     message.video?.caption ||
     message.file?.name ||
     "";
-  if (copyText || message.type !== "text")
-    menuItems.push({ label: "Copy", action: () => copyToClipboard(copyText) });
-  if (["image", "video", "audio", "file"].includes(message.type))
+
+  const menuItems = [
+    { label: "Copy", action: () => copyToClipboard(copyText) },
+  ];
+
+  if (["image", "video", "audio", "file"].includes(message.type)) {
     menuItems.push({
       label: "Download",
-      action: () => downloadFile(message[message.type]?.url, message[message.type]?.name),
+      action: () =>
+        downloadFile(
+          message[message.type]?.url,
+          message[message.type]?.filename
+        ),
     });
+  }
+
   menuItems.push({
     label: "Info",
     action: () => {
@@ -272,26 +287,20 @@ export default function UserMessage({ message, ts, config }) {
         </Dialog>
       )}
 
-      {/* Info Modal */}
+      {/* Info Modal with table */}
       <Dialog open={infoOpen} onClose={() => setInfoOpen(false)}>
-        <DialogTitle>Message Info</DialogTitle>
+        <DialogTitle>{message.type} Info</DialogTitle>
         <DialogContent>
-          <Typography variant="body2">
-            {JSON.stringify(
-              {
-                type: message.type,
-                name:
-                  message.image?.caption ||
-                  message.video?.caption ||
-                  message.file?.name ||
-                  null,
-                url: message[message.type]?.url || null,
-                body: message.text?.body || null,
-              },
-              null,
-              2
-            )}
-          </Typography>
+          <Table>
+            <TableBody>
+              {Object.entries(message[message.type]).map(([key, value]) => (
+                <TableRow key={key}>
+                  <TableCell>{key}</TableCell>
+                  <TableCell>{value}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
           <Box mt={2} display="flex" justifyContent="flex-end">
             <Button onClick={() => setInfoOpen(false)}>Close</Button>
           </Box>

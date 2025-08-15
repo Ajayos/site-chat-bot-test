@@ -33,8 +33,8 @@
     "from": "bot",
     "type": "file",
     "file": {
-      "url": "https://example.com/file.pdf",
-      "name": "📄 Sample PDF"
+      "url": "https://github.com/Ajayos.png",
+      "name": "Sample image"
     }
   },
   {
@@ -48,7 +48,8 @@
     "from": "bot",
     "type": "interactive",
     "interactive": {
-      "type": "buttons",
+      "type": "text",
+      "header": "",
       "body": "Choose an option:",
       "footer": "Powered by Site Chat Bot",
       "buttons": [
@@ -62,12 +63,15 @@
     "from": "bot",
     "type": "interactive",
     "interactive": {
-      "type": "chips",
+      "type": "text",
+      "header": "sdfgh",
       "body": "Quick actions:",
       "chips": [
-        { "id": "track_order", "title": "📦 Track Order", "url": "#" },
-        { "id": "refund", "title": "💵 Refund", "url": "#" },
-        { "id": "faq", "title": "📚 FAQ", "url": "#" }
+        { "type": "reply", "title": "📦 Track Order" },
+        { "type": "url", "title": "💵 Refund", "url": "#" },
+        { "type": "url", "title": "📚 FAQ", "url": "#" },
+        { "type": "email", "title": "📧 Email Us", "email": { "address": "support@example.com" } },
+        { "type": "number", "title": "📞 Call Us", "number": { "phone": "+91-9876543210" } }
       ]
     }
   },
@@ -94,8 +98,8 @@
     "from": "bot",
     "type": "interactive",
     "interactive": {
-      "type": "url-buttons",
       "body": "Explore more:",
+      "footer": "Visit our website for more info",
       "buttons": [
         { "type": "url", "url": { "title": "🌐 Visit Website", "payload": "https://example.com" } },
         { "type": "email", "email": { "title": "📧 Send Email", "payload": "support@example.com" } }
@@ -115,9 +119,35 @@
   },
   {
     "from": "bot",
+    "type": "interactive",
+    "interactive": {
+      "type": "sections",
+      "header": "📋 Service Menu",
+      "body": "Select a category to explore more options:",
+      "footer": "Powered by Site Chat Bot",
+      "sections": [
+        {
+          "title": "🛍 Shopping",
+          "rows": [
+            { "id": "shop_latest", "title": "🆕 New Arrivals", "description": "Check out our latest products" },
+            { "id": "shop_sale", "title": "🔥 On Sale", "description": "Big discounts available" }
+          ]
+        },
+        {
+          "title": "💼 Support",
+          "rows": [
+            { "id": "support_contact", "title": "📞 Contact Support", "description": "Talk to our help desk" },
+            { "id": "support_faq", "title": "📚 FAQ", "description": "Frequently asked questions" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "from": "bot",
     "type": "sticker",
     "sticker": {
-      "url": "https://example.com/sticker.webp"
+      "url": "https://github.com/Ajay-o-s.png"
     }
   }
 ]
