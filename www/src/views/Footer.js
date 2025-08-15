@@ -175,7 +175,9 @@ export default function Footer({ onSendMedia }) {
         <MenuItem onClick={() => handleMediaSelect("document")}>
           Document
         </MenuItem>
-        <MenuItem onClick={() => handleMediaSelect("sticker")}>Sticker</MenuItem>
+        <MenuItem onClick={() => handleMediaSelect("sticker")}>
+          Sticker
+        </MenuItem>
       </Menu>
 
       {/* Hidden File Input */}

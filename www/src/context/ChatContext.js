@@ -11,11 +11,15 @@ export function ChatProvider({ children }) {
 
   const sendMessage = useCallback(
     (msg) => {
-      dispatch(setTyping(true));
-      setTimeout(() => {
-        dispatch(setTyping(false));
+      if (msg.from === "bot") {
+        dispatch(setTyping(true));
+        setTimeout(() => {
+          dispatch(setTyping(false));
+          dispatch(addMessage(msg));
+        }, 300);
+      } else {
         dispatch(addMessage(msg));
-      }, 300);
+      }
     },
     [dispatch]
   );

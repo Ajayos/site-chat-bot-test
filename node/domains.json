@@ -1,0 +1,70 @@
+{
+  "dev.ajayos.in": {
+    "header": {
+      "text": "AOS",
+      "icon": "https://github.com/Ajay-o-s.png",
+      "color": "#05c9faff",
+      "textColor": "#ffffff",
+      "font": "'Poppins', sans-serif",
+      "fontWeight": 600
+    },
+    "body": {
+      "bg": "https://github.com/Ajay-o-s.png",
+      "font": "'Poppins', sans-serif"
+    },
+    "userMessage": {
+      "bg": "#4A90E2",
+      "textColor": "#ffffff"
+    },
+    "botMessage": {
+      "bg": "#EDEDED",
+      "textColor": "#000000"
+    },
+    "systemMessage": {
+      "info": "#2196f3",
+      "warning": "#ff9800",
+      "success": "#4caf50",
+      "error": "#f44336"
+    },
+    "footer": {
+      "color": "#ffffff"
+    },
+    "input": {
+      "placeholder": "Ask me anything..."
+    }
+  },
+  "prudent.co.in": {
+    "header": {
+      "text": "PRUDENT",
+      "icon": "https://prutech.org/ACP/assets/img/brandImg/BrandWhite.png",
+      "color": "#05c9faff",
+      "textColor": "#ffffff",
+      "font": "'Poppins', sans-serif",
+      "fontWeight": 600
+    },
+    "body": {
+      "bg": "blue",
+      "font": "'Poppins', sans-serif"
+    },
+    "userMessage": {
+      "bg": "#4A90E2",
+      "textColor": "#ffffff"
+    },
+    "botMessage": {
+      "bg": "#EDEDED",
+      "textColor": "#000000"
+    },
+    "systemMessage": {
+      "info": "#2196f3",
+      "warning": "#ff9800",
+      "success": "#4caf50",
+      "error": "#f44336"
+    },
+    "footer": {
+      "color": "#ffffff"
+    },
+    "input": {
+      "placeholder": "Ask me anything..."
+    }
+  }
+}

@@ -97,7 +97,8 @@ export default function UserMessage({ message, ts, config }) {
 
     switch (message.type) {
       case "text":
-        if (isSingleEmoji(message.text?.body)) {
+      case "response":
+        if (isSingleEmoji(message[message.type]?.body)) {
           return (
             <motion.div
               ref={emojiRef}
@@ -109,14 +110,14 @@ export default function UserMessage({ message, ts, config }) {
                 variant="h3"
                 sx={{ lineHeight: 1, textAlign: "center" }}
               >
-                {message.text.body}
+                {message[message.type]?.body}
               </Typography>
             </motion.div>
           );
         }
         return (
           <Typography onContextMenu={handleContextMenu}>
-            {message.text?.body}
+            {message[message.type]?.body}
           </Typography>
         );
 
@@ -212,9 +213,8 @@ export default function UserMessage({ message, ts, config }) {
   };
 
   const copyText =
-    message.text?.body ||
-    message.image?.caption ||
-    message.video?.caption ||
+    message[message.type]?.body ||
+    message[message.type]?.caption ||
     message.file?.name ||
     "";
 

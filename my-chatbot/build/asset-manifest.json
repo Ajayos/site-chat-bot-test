@@ -8,8 +8,5 @@
     "main.7448432f.js.map": "/site-chat-bot-test/my-chatbot/build/static/js/main.7448432f.js.map",
     "453.3a47e7b8.chunk.js.map": "/site-chat-bot-test/my-chatbot/build/static/js/453.3a47e7b8.chunk.js.map"
   },
-  "entrypoints": [
-    "static/css/main.5ad38bdc.css",
-    "static/js/main.7448432f.js"
-  ]
+  "entrypoints": ["static/css/main.5ad38bdc.css", "static/js/main.7448432f.js"]
 }

@@ -1,37 +1,44 @@
-import React, { useEffect } from "react";
-import { Provider, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { store } from "./store/store";
 import Header from "./views/Header";
 import Body from "./views/Body";
 import Footer from "./views/Footer";
 import Box from "@mui/material/Box";
 import { ChatProvider, useChat } from "./context/ChatContext";
+import { loadConfig } from "./config";
+import { updateConfig } from "./store/configSlice";
 
 function ChatShell() {
+  const dispatch = useDispatch();
   const config = useSelector((s) => s.config);
-  const { sendSystem, sendBot, setIsTyping } = useChat();
+  const [isReady, setIsReady] = useState(false);
 
-  // Example handlers for Header menu
-  const handleCloseChat = () => {
-    // Up to you: hide widget, navigate, etc.
-    sendSystem("Chat closed by user");
-  };
-
-  // Hook: simulate bot typing when any user message is sent
-  // A quick way: listen to document-level custom event
   useEffect(() => {
-    const onUserSent = (e) => {
-      // start typing
-      setIsTyping(true);
-      // fake reply
-      setTimeout(() => {
-        setIsTyping(false);
-        sendBot(`Bot received: "${e.detail?.text || ""}"`);
-      }, 1200);
-    };
-    window.addEventListener("chat:user-sent", onUserSent);
-    return () => window.removeEventListener("chat:user-sent", onUserSent);
-  }, [setIsTyping, sendBot]);
+    (async () => {
+      try {
+        // Step 1: Get API URL from public/config.json
+        const { API_URL } = await loadConfig();
+        console.log(window.location.origin);
+
+        // Step 2: Fetch backend config and body have window.location
+        const res = await fetch(`${API_URL}api/config`, {
+          method: "POST",
+          body: JSON.stringify({ domain: window.location.origin }),
+        });
+        const data = await res.json();
+
+        // Step 3: Update Redux
+        dispatch(updateConfig(data));
+
+        setIsReady(true);
+      } catch (err) {
+        console.error("Config load error:", err);
+      }
+    })();
+  }, [dispatch]);
+
+  if (!isReady) return null; // wait until config is loaded
 
   return (
     <Box
@@ -40,40 +47,28 @@ function ChatShell() {
       height="100vh"
       sx={{ bgcolor: config.body.bg }}
     >
-      <Header onCloseChat={handleCloseChat} />
+      <Header />
       <Body />
-      <Footer
-        onFileUpload={(file) => {
-          sendSystem(`File attached: ${file.name}`, "info");
-        }}
-        onVoiceSend={() => {
-          sendSystem("Voice message recorded", "info");
-        }}
-      />
+      <Footer />
     </Box>
   );
 }
 
-// Wrap Footer's sendMessage to also dispatch an event (so typing/bot works)
 function EventsBridge() {
   const { sendMessage } = useChat();
-
   useEffect(() => {
-    // Monkey-patch a global helper so Footer can continue to just call sendMessage normally.
-    // If you prefer, you can pass a prop to Footer instead.
     window.__chat_send = (text) => {
       sendMessage(text);
-      const event = new CustomEvent("chat:user-sent", { detail: { text } });
-      window.dispatchEvent(event);
+      window.dispatchEvent(
+        new CustomEvent("chat:user-sent", { detail: { text } })
+      );
     };
   }, [sendMessage]);
-
   return null;
 }
 
 function AppInner() {
   const { setIsTyping } = useChat();
-  // keep typing reset on unmount just in case
   useEffect(() => () => setIsTyping(false), [setIsTyping]);
   return (
     <>

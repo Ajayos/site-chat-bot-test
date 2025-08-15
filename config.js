@@ -1,3 +1,3 @@
 window.CHATBOT_CONFIG = {
-  basePath: "/customer1/chatbot"
+  basePath: "/customer1/chatbot",
 };

@@ -20,10 +20,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DownloadIcon from "@mui/icons-material/Download";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ReplyIcon from "@mui/icons-material/Reply";
-import PushPinIcon from "@mui/icons-material/PushPin";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import PlaceIcon from "@mui/icons-material/Place";
@@ -32,6 +29,8 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { formatTime } from "../../utils/time";
 import AudioPlayer from "../../components/AudioPlayer";
+import { useChat } from "../../context/ChatContext";
+import { nanoid } from "@reduxjs/toolkit";
 
 /**
  * Advanced BotMessage
@@ -42,6 +41,7 @@ import AudioPlayer from "../../components/AudioPlayer";
  * - Extras: copy helpers, selected button state, meta/ticks slot
  */
 export default function BotMessage({ message, ts, config }) {
+  const { sendMessage } = useChat();
   const [contextAnchor, setContextAnchor] = useState(null);
   const [interactiveMenuAnchor, setInteractiveMenuAnchor] = useState(null);
   const [lightbox, setLightbox] = useState({
@@ -54,16 +54,13 @@ export default function BotMessage({ message, ts, config }) {
   const bubbleSx = useMemo(
     () => ({
       position: "relative",
-      bgcolor: config?.botMessage?.bg || "#f1f5f9",
+      // bgcolor: config?.botMessage?.bg || "#f1f5f9",
       color: config?.botMessage?.textColor || "#111827",
       fontFamily: config?.body?.font || "Inter, system-ui, Arial",
-      // px: 1,
-      // py: 0.75,
-      borderRadius: "14px",
+      borderRadius: "26px",
       borderTopLeftRadius: "0px",
       maxWidth: "92%",
       whiteSpace: "pre-wrap",
-      boxShadow: "0 1px 1px rgba(0,0,0,0.06)",
       "&::before": {
         content: '""',
         position: "absolute",
@@ -97,7 +94,6 @@ export default function BotMessage({ message, ts, config }) {
     display: "flex",
     flexDirection: "column",
     pt: 0,
-    bgcolor: "none",
   };
 
   const wButtonSx = (selected, end = false) => ({
@@ -107,10 +103,9 @@ export default function BotMessage({ message, ts, config }) {
     py: 0.7,
     px: -5.2,
     gap: 1,
-    width: "100%", // Full width
+    width: "100%",
     bgcolor: selected ? "#1091dbff" : "#3a74f1ff",
     "&:hover": { bgcolor: selected ? "#0047b3ff" : "#0047b3ff" },
-    // if end true then have a down have round like
     borderBottomLeftRadius: end ? "25px" : "0px",
     borderBottomRightRadius: end ? "25px" : "0px",
     borderTopLeftRadius: "0px",
@@ -195,19 +190,26 @@ export default function BotMessage({ message, ts, config }) {
   };
 
   // Centralized Button Action Handler
-  const handleButtonClick = (btn, idx) => {
+  const handleButtonClick = (btn, idx, type) => {
     setLastSelectedButtonIdx(idx);
     if (!btn) return;
     switch (btn.type) {
       case "reply":
-        console.log("Reply clicked:", btn.reply.title);
+        console.log(btn);
+        var text = btn.reply.title || btn.reply.title;
+        sendMessage({
+          id: nanoid(),
+          from: "user",
+          type: "response",
+          response: { body: text },
+          ts: new Date().toISOString(),
+        });
         break;
       case "url":
         window.open(btn.url.payload, "_blank");
         break;
       case "otp":
         navigator.clipboard.writeText(btn.otp.code || "");
-        console.log("OTP copied:", btn.otp.code);
         break;
       case "email":
         window.open(`mailto:${btn.email.payload}`, "_self");
@@ -234,8 +236,7 @@ export default function BotMessage({ message, ts, config }) {
   // ------- Interactive Renderer -------
   const renderInteractive = () => {
     if (!message?.interactive) return null;
-    const { header, body, footer, buttons, list, radio, slider, type } =
-      message.interactive;
+    const { header, body, footer, buttons, type } = message.interactive;
 
     return (
       <Box
@@ -243,6 +244,7 @@ export default function BotMessage({ message, ts, config }) {
           overflow: "hidden",
           minWidth: 400,
           maxWidth: 400,
+          bgcolor: "transparent",
         }}
       >
         {/* Header */}
@@ -252,8 +254,6 @@ export default function BotMessage({ message, ts, config }) {
               <Card
                 variant="outlined"
                 sx={{
-                  // borderColor: "#eef2f7",
-                  // borderRadius: 2,
                   overflow: "hidden",
                 }}
               >
@@ -268,10 +268,7 @@ export default function BotMessage({ message, ts, config }) {
             )}
 
             {type === "video" && header.url && (
-              <Card
-                variant="outlined"
-                sx={{ borderColor: "#eef2f7", borderRadius: 2 }}
-              >
+              <Card variant="outlined" sx={{ overflow: "hidden" }}>
                 <CardMedia
                   component="video"
                   controls
@@ -316,14 +313,30 @@ export default function BotMessage({ message, ts, config }) {
 
         {/* Body */}
         {body && (
-          <Box sx={{ px: 1, py: 1, width: "100%" }}>
+          <Box
+            sx={{
+              px: 1,
+              py: 1,
+              width: "100%",
+              bgcolor: config?.botMessage?.bg,
+              borderBottom: config?.botMessage?.bg,
+            }}
+          >
             <Typography>{body}</Typography>
           </Box>
         )}
 
         {/* Footer */}
         {footer && (
-          <Box sx={{ px: 1, py: 1, width: "100%" }}>
+          <Box
+            sx={{
+              px: 1,
+              py: 1,
+              width: "100%",
+              bgcolor: config?.botMessage?.bg,
+              borderBottom: config?.botMessage?.bg,
+            }}
+          >
             <Typography variant="caption" sx={footerSx}>
               {footer}
             </Typography>
@@ -334,7 +347,12 @@ export default function BotMessage({ message, ts, config }) {
           direction="row"
           alignItems="center"
           justifyContent="flex-end"
-          sx={{ px: 1, py: 0.5 }}
+          sx={{
+            px: 1,
+            py: 0.5,
+            bgcolor: config?.botMessage?.bg,
+            borderBottom: config?.botMessage?.bg,
+          }}
         >
           <Typography variant="caption" sx={{ opacity: 0.6 }}>
             {formatTime(ts, { format: "hh:mm A" })}
@@ -345,33 +363,18 @@ export default function BotMessage({ message, ts, config }) {
         {buttons?.length > 0 && (
           <Box sx={buttonStackSx}>
             {buttons.map((btn, i) => {
-              const getButtonIcon = (type) => {
-                switch (type) {
-                  case "reply":
-                    return <ReplyIcon />;
-                  case "url":
-                    return <OpenInNewIcon />;
-                  case "email":
-                    return <EmailIcon />;
-                  case "location":
-                    return <PlaceIcon />;
-                  case "otp":
-                    return <ContentCopyIcon />;
-                  case "number":
-                    return <PhoneIcon />;
-                  default:
-                    return null;
-                }
-              };
+              const getButtonIcon =
+                {
+                  reply: <ReplyIcon />,
+                  url: <OpenInNewIcon />,
+                  email: <EmailIcon />,
+                  location: <PlaceIcon />,
+                  otp: <ContentCopyIcon />,
+                  number: <PhoneIcon />,
+                }[btn.type] || null;
 
               const btnLabel =
-                btn.reply?.title ||
-                btn.url?.title ||
-                btn.email?.title ||
-                btn.location?.title ||
-                btn.otp?.code ||
-                btn.number?.title ||
-                "Button";
+                btn[btn.type]?.title || btn[btn.type]?.code || "Button";
 
               return (
                 <Button
@@ -384,7 +387,7 @@ export default function BotMessage({ message, ts, config }) {
                     lastSelectedButtonIdx === i,
                     i === buttons.length - 1
                   )}
-                  startIcon={getButtonIcon(btn.type)}
+                  startIcon={getButtonIcon}
                 >
                   {btnLabel}
                 </Button>
@@ -415,6 +418,7 @@ export default function BotMessage({ message, ts, config }) {
                   key={i}
                   onClick={() => {
                     setInteractiveMenuAnchor(null);
+                    // handleButtonClick(item, i, "list")
                     if (item.url) window.open(item.url, "_blank");
                     if (item.onSelect) item.onSelect(item);
                   }}
@@ -431,7 +435,7 @@ export default function BotMessage({ message, ts, config }) {
           <Box
             sx={{
               display: "flex",
-              gap: 1,
+              gap: 0.5,
               mt: 1,
               flexWrap: "wrap",
               px: 1,
@@ -468,26 +472,28 @@ export default function BotMessage({ message, ts, config }) {
 
         {/* Chips */}
         {message.interactive.chips?.length > 0 && (
-          <Box sx={{ px: 1, pb: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
+          <Box
+            sx={{
+              px: 1,
+              pb: 1,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 0.5,
+              mt: 1,
+            }}
+          >
             {message.interactive.chips.map((chip, i) => {
-              const getChipIcon = (type) => {
-                switch (type) {
-                  case "reply":
-                    return <ReplyIcon fontSize="small" />;
-                  case "url":
-                    return <OpenInNewIcon fontSize="small" />;
-                  case "email":
-                    return <EmailIcon fontSize="small" />;
-                  case "number":
-                    return <PhoneIcon fontSize="small" />;
-                  default:
-                    return null;
-                }
-              };
+              const getChipIcon =
+                {
+                  reply: <ReplyIcon fontSize="small" />,
+                  url: <OpenInNewIcon fontSize="small" />,
+                  email: <EmailIcon fontSize="small" />,
+                  number: <PhoneIcon fontSize="small" />,
+                }[chip.type] || null;
               return (
                 <Chip
                   key={i}
-                  icon={getChipIcon(chip.type)}
+                  icon={getChipIcon}
                   label={chip.title}
                   clickable
                   color="primary"
@@ -498,9 +504,9 @@ export default function BotMessage({ message, ts, config }) {
           </Box>
         )}
 
-        {/* Sections (New) */}
+        {/* Sections */}
         {message.interactive.sections?.length > 0 && (
-          <Box sx={{ px: 1, pb: 1 }}>
+          <Box sx={{ px: 1, pb: 1, bgcolor: "transparent" }}>
             {message.interactive.sections.map((section, sIndex) => (
               <Box key={sIndex} sx={{ mb: 1 }}>
                 <Typography
@@ -534,7 +540,13 @@ export default function BotMessage({ message, ts, config }) {
     switch (message.type) {
       case "text":
         return (
-          <Box sx={{ p: 1 }}>
+          <Box
+            sx={{
+              p: 1,
+              bgcolor: config?.botMessage?.bg,
+              borderBottom: config?.botMessage?.bg,
+            }}
+          >
             <Typography>{message.text?.body}</Typography>
             <Stack
               direction="row"
@@ -624,8 +636,10 @@ export default function BotMessage({ message, ts, config }) {
         return (
           <Box
             sx={{
-              width: 380,
+              width: 350,
               p: 1,
+              bgcolor: config?.botMessage?.bg,
+              borderBottom: config?.botMessage?.bg,
             }}
           >
             <AudioPlayer src={message.audio?.url} />
@@ -633,7 +647,7 @@ export default function BotMessage({ message, ts, config }) {
               direction="row"
               alignItems="center"
               justifyContent="flex-end"
-              sx={{ px: 5, py: -1 }}
+              sx={{ px: 1, py: -1 }}
             >
               <Typography variant="caption" sx={{ opacity: 0.6 }}>
                 {formatTime(ts, { format: "hh:mm A" })}
@@ -641,7 +655,6 @@ export default function BotMessage({ message, ts, config }) {
             </Stack>
           </Box>
         );
-
       case "file":
         return (
           <Card
@@ -688,7 +701,6 @@ export default function BotMessage({ message, ts, config }) {
             </Stack>
           </Card>
         );
-
       case "contact":
         return (
           <Card
@@ -859,8 +871,6 @@ export default function BotMessage({ message, ts, config }) {
               // borderRadius: 2,
               overflow: "hidden",
               bgcolor: config?.botMessage?.bg,
-              borderBottomLeftRadius: "25px",
-              borderBottomRightRadius: "25px",
             }}
           >
             <Box

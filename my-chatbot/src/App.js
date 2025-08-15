@@ -10,14 +10,14 @@ export default function App() {
       text: "👋 Welcome! Start chatting with us or choose an option below.",
       from: "bot",
       time: dayjs().format("HH:mm"),
-      isWelcome: true
-    }
+      isWelcome: true,
+    },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [clickedButtons, setClickedButtons] = useState({
     site: false,
-    contact: false
+    contact: false,
   });
   const chatBodyRef = useRef(null);
 
@@ -25,8 +25,13 @@ export default function App() {
     const msgText = text || input;
     if (!msgText.trim()) return;
 
-    const userMsg = { id: uuidv4(), text: msgText, from: "user", time: dayjs().format("HH:mm") };
-    setMessages(prev => [...prev, userMsg]);
+    const userMsg = {
+      id: uuidv4(),
+      text: msgText,
+      from: "user",
+      time: dayjs().format("HH:mm"),
+    };
+    setMessages((prev) => [...prev, userMsg]);
     if (!text) setInput("");
 
     // Show typing animation
@@ -35,14 +40,14 @@ export default function App() {
     // Fake bot reply after delay
     setTimeout(() => {
       setIsTyping(false);
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
           id: uuidv4(),
           text: `Bot received: "${msgText}"`,
           from: "bot",
-          time: dayjs().format("HH:mm")
-        }
+          time: dayjs().format("HH:mm"),
+        },
       ]);
     }, 1500);
   };
@@ -50,7 +55,7 @@ export default function App() {
   const handleButtonClick = (type) => {
     if (clickedButtons[type]) return; // already clicked
 
-    setClickedButtons(prev => ({ ...prev, [type]: true }));
+    setClickedButtons((prev) => ({ ...prev, [type]: true }));
 
     if (type === "site") {
       window.open("https://vitejs.dev/", "_blank");
@@ -75,7 +80,7 @@ export default function App() {
       </div>
 
       <div className="chat-body" ref={chatBodyRef}>
-        {messages.map(m => (
+        {messages.map((m) => (
           <div key={m.id} className={`message ${m.from}`}>
             <div className="msg-text">
               {m.text}

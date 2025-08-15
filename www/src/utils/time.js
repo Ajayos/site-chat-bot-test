@@ -15,29 +15,24 @@ dayjs.extend(timezone);
  * @param {string} [options.tz] - Timezone (default = browser's timezone)
  * @returns {string} - Formatted time string
  */
-export function formatTime(ts, {
-  twentyFourHour = false,
-  format,
-  tz
-} = {}) {
+export function formatTime(ts, { twentyFourHour = false, format, tz } = {}) {
   const userTz = tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
+
   // Default formats
   const defaultFormat = twentyFourHour ? "HH:mm:ss" : "hh:mm:ss A";
-  
-  return dayjs(ts).tz(userTz).format(format || defaultFormat);
+
+  return dayjs(ts)
+    .tz(userTz)
+    .format(format || defaultFormat);
 }
 
 /**
  * Shortcut for IST (Asia/Kolkata) formatting
  */
-export function formatIST(ts, {
-  twentyFourHour = false,
-  format
-} = {}) {
+export function formatIST(ts, { twentyFourHour = false, format } = {}) {
   return formatTime(ts, {
     twentyFourHour,
     format,
-    tz: "Asia/Kolkata"
+    tz: "Asia/Kolkata",
   });
 }

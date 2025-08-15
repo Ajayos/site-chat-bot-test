@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  domain: "http://localhost:5000",
   header: {
-    text: "AOS",
+    text: "AOS-old",
     icon: "https://github.com/Ajay-o-s.png",
     color: "#05c9faff",
     textColor: "#ffffff",
@@ -10,7 +11,8 @@ const initialState = {
     fontWeight: 600,
   },
   body: {
-    bg: "#F5F7FA",
+    // bg: "#F5F7FA",
+    bg: "https://github.com/Ajay-o-s.png",
     font: "'Poppins', sans-serif",
   },
   userMessage: {

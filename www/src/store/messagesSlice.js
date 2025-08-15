@@ -62,7 +62,9 @@ export const selectIsTyping = (state) => state.messages.isTyping;
 
 // ordered messages by ts
 export const selectMessagesOrdered = createSelector([selectMessages], (items) =>
-  [...items].sort((a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime())
+  [...items].sort(
+    (a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime(),
+  ),
 );
 
 // Grouped by date string
@@ -85,7 +87,7 @@ export const selectMessagesByDate = createSelector(
       groups.push(m);
     });
     return groups;
-  }
+  },
 );
 
 // persistence middleware factory

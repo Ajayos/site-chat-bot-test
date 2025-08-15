@@ -35,18 +35,13 @@ export default function Body() {
       : { backgroundColor: bg || "#f8f8f8" };
   };
 
-  const sysColors = {
-    info: config.systemMessage.info,
-    warning: config.systemMessage.warning,
-    success: config.systemMessage.success,
-    error: config.systemMessage.error,
-  };
-
   // Animated wrapper for messages with alignment
   const AnimatedMessage = ({ children, fadeOnly = false, id, from }) => {
     let justify = "start"; // default left
-    if (from === "user") justify = "end"; // right
-    else if (from === "system") justify = "center"; // center
+    if (from === "user")
+      justify = "end"; // right
+    else if (from === "system")
+      justify = "center"; // center
     else justify = "start"; // bot left
 
     return (
@@ -108,7 +103,6 @@ export default function Body() {
               text={m.label || m.text}
               ts={m.ts}
               config={config}
-              sysColors={sysColors}
             />
           </AnimatedMessage>
         );

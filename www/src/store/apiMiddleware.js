@@ -4,24 +4,24 @@ export const sendMessageApiMiddleware =
     // Pass action to reducers first
     const result = next(action);
 
-    // Only trigger API if the message is from the user
     if (
       action.type === "messages/addMessage" &&
       action.payload.from === "user"
     ) {
-      const messageText =
-        action.payload.text?.body || action.payload.text || "";
+      // Get backend domain from config in Redux
+      const state = storeAPI.getState();
+      const API_BASE = state.config?.domain || "http://localhost:5000/";
+      const API_URL = `${API_BASE}api/chat`;
 
       try {
-        const res = await fetch("http://localhost:5000/api/chat", {
+        const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: messageText }),
+          body: JSON.stringify(action.payload),
         });
 
         const data = await res.json();
 
-        // Send bot reply using full meta format from API
         storeAPI.dispatch({
           type: "messages/addMessage",
           payload: data,
@@ -29,7 +29,6 @@ export const sendMessageApiMiddleware =
       } catch (err) {
         console.error("API error:", err);
 
-        // Send system error message in meta format
         storeAPI.dispatch({
           type: "messages/addMessage",
           payload: {

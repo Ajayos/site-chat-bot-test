@@ -1,8 +1,11 @@
 (function () {
-  const CHAT_URL = "http://localhost:3000/site-chat-bot-test/my-chatbot/build";
+  const CHAT_URL = "http://localhost:3000/site-chat-bot-test/www/build";
 
   function injectWidget() {
-    if (document.querySelector(".chatbot-btn") || document.querySelector(".chatbot-frame")) {
+    if (
+      document.querySelector(".chatbot-btn") ||
+      document.querySelector(".chatbot-frame")
+    ) {
       return; // already there
     }
 
@@ -36,7 +39,7 @@
           position: fixed;
           bottom: 90px;
           right: 20px;
-          width: 350px;
+          width: 500;
           height: 500px;
           border: none;
           border-radius: 10px;
@@ -53,6 +56,8 @@
     const iframe = document.createElement("iframe");
     iframe.className = "chatbot-frame";
     iframe.src = CHAT_URL;
+    // as set width
+    iframe.width = "500px";
     iframe.onload = () => console.log("[Chatbot] Iframe loaded:", CHAT_URL);
     document.body.appendChild(iframe);
 
@@ -65,13 +70,16 @@
     // Toggle chat visibility
     button.addEventListener("click", (e) => {
       if (e.detail === 0) return; // ignore drag clicks
-      const isHidden = iframe.style.display === "none" || iframe.style.display === "";
+      const isHidden =
+        iframe.style.display === "none" || iframe.style.display === "";
       iframe.style.display = isHidden ? "block" : "none";
       console.log(`[Chatbot] Chat ${isHidden ? "opened" : "closed"}`);
     });
 
     // Dragging logic for button only
-    let offsetX, offsetY, isDragging = false;
+    let offsetX,
+      offsetY,
+      isDragging = false;
 
     button.addEventListener("mousedown", (e) => {
       isDragging = true;
@@ -84,8 +92,14 @@
       if (!isDragging) return;
       let left = e.clientX - offsetX;
       let top = e.clientY - offsetY;
-      left = Math.max(0, Math.min(window.innerWidth - button.offsetWidth, left));
-      top = Math.max(0, Math.min(window.innerHeight - button.offsetHeight, top));
+      left = Math.max(
+        0,
+        Math.min(window.innerWidth - button.offsetWidth, left),
+      );
+      top = Math.max(
+        0,
+        Math.min(window.innerHeight - button.offsetHeight, top),
+      );
       button.style.left = left + "px";
       button.style.top = top + "px";
       button.style.right = "auto";
@@ -105,7 +119,10 @@
   function startObserver() {
     console.log("[Chatbot] Starting MutationObserver...");
     const observer = new MutationObserver(() => {
-      if (!document.querySelector(".chatbot-btn") || !document.querySelector(".chatbot-frame")) {
+      if (
+        !document.querySelector(".chatbot-btn") ||
+        !document.querySelector(".chatbot-frame")
+      ) {
         console.log("[Chatbot] Widget missing — re-injecting...");
         injectWidget();
       }
@@ -121,7 +138,10 @@
     }, 2000); // wait 2s
   }
 
-  if (document.readyState === "complete" || document.readyState === "interactive") {
+  if (
+    document.readyState === "complete" ||
+    document.readyState === "interactive"
+  ) {
     initWidget();
   } else {
     document.addEventListener("DOMContentLoaded", initWidget);
