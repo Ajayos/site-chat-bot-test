@@ -1,5 +1,5 @@
 (function () {
-  const CHAT_URL = "https://ajayos.in/site-chat-bot-test/my-chatbot/build/";
+  const CHAT_URL = "https://ajayos.in/site-chat-bot-test/www/build/";
 
   function injectWidget() {
     if (document.querySelector(".chatbot-btn") || document.querySelector(".chatbot-frame")) {

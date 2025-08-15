@@ -1,0 +1,155 @@
+/* Fullscreen Chat */
+.chat-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  z-index: 99999;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.chat-header {
+  background: #007bff;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* Chat Body */
+.chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+/* Messages */
+.message {
+  margin-bottom: 10px;
+  max-width: 80%;
+}
+.message.user {
+  text-align: right;
+  margin-left: auto;
+}
+.message.bot {
+  text-align: left;
+  margin-right: auto;
+}
+.msg-text {
+  background: #f1f1f1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: inline-block;
+}
+.msg-time {
+  font-size: 10px;
+  color: gray;
+  margin-top: 2px;
+}
+
+/* Input Area */
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+.chat-input input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+.chat-input button {
+  padding: 12px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  font-size: 14px;
+}
+
+/* Welcome Buttons */
+.welcome-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.chat-now-btn,
+.contact-btn {
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+.chat-now-btn {
+  background: #007bff;
+}
+.contact-btn {
+  background: #28a745;
+}
+
+/* Clicked State */
+.clicked {
+  background: brown !important;
+  cursor: not-allowed;
+}
+
+/* Typing Animation */
+.typing-dots {
+  background: #f1f1f1;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.typing-dots span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: gray;
+  border-radius: 50%;
+  animation: blink 1.4s infinite both;
+}
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .chat-fullscreen {
+    font-size: 14px;
+  }
+  .msg-text {
+    font-size: 14px;
+  }
+  .chat-input input {
+    font-size: 14px;
+  }
+}

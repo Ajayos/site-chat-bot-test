@@ -1,0 +1,123 @@
+[
+  {
+    "from": "bot",
+    "type": "text",
+    "text": { "body": "👋 Hello! How can I help you today?" }
+  },
+  {
+    "from": "bot",
+    "type": "image",
+    "image": {
+      "url": "https://picsum.photos/300",
+      "caption": "📷 Here's a random image for you"
+    }
+  },
+  {
+    "from": "bot",
+    "type": "video",
+    "video": {
+      "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "caption": "🎥 Sample video",
+      "mime": "video/mp4"
+    }
+  },
+  {
+    "from": "bot",
+    "type": "audio",
+    "audio": {
+      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      "mime": "audio/mpeg"
+    }
+  },
+  {
+    "from": "bot",
+    "type": "file",
+    "file": {
+      "url": "https://example.com/file.pdf",
+      "name": "📄 Sample PDF"
+    }
+  },
+  {
+    "from": "system",
+    "type": "notification",
+    "notification": {
+      "body": "🚀 Version 2.0 is now live!"
+    }
+  },
+  {
+    "from": "bot",
+    "type": "interactive",
+    "interactive": {
+      "type": "buttons",
+      "body": "Choose an option:",
+      "footer": "Powered by Site Chat Bot",
+      "buttons": [
+        { "type": "reply", "reply": { "title": "🆘 Help", "payload": "help" } },
+        { "type": "reply", "reply": { "title": "💰 Pricing", "payload": "pricing" } },
+        { "type": "reply", "reply": { "title": "📞 Contact Us", "payload": "contact" } }
+      ]
+    }
+  },
+  {
+    "from": "bot",
+    "type": "interactive",
+    "interactive": {
+      "type": "chips",
+      "body": "Quick actions:",
+      "chips": [
+        { "id": "track_order", "title": "📦 Track Order", "url": "#" },
+        { "id": "refund", "title": "💵 Refund", "url": "#" },
+        { "id": "faq", "title": "📚 FAQ", "url": "#" }
+      ]
+    }
+  },
+  {
+    "from": "bot",
+    "type": "contact",
+    "contact": {
+      "name": "Ajay O S",
+      "phone": "+91-9876543210",
+      "email": "ajay@example.com"
+    }
+  },
+  {
+    "from": "bot",
+    "type": "location",
+    "location": {
+      "latitude": 9.9312,
+      "longitude": 76.2673,
+      "name": "Kochi Office",
+      "address": "MG Road, Kochi, Kerala, India"
+    }
+  },
+  {
+    "from": "bot",
+    "type": "interactive",
+    "interactive": {
+      "type": "url-buttons",
+      "body": "Explore more:",
+      "buttons": [
+        { "type": "url", "url": { "title": "🌐 Visit Website", "payload": "https://example.com" } },
+        { "type": "email", "email": { "title": "📧 Send Email", "payload": "support@example.com" } }
+      ]
+    }
+  },
+  {
+    "from": "bot",
+    "type": "interactive",
+    "interactive": {
+      "type": "otp",
+      "body": "🔐 Verify your account",
+      "buttons": [
+        { "type": "otp", "otp": { "title": "OTP 472839", "code": "472839" } }
+      ]
+    }
+  },
+  {
+    "from": "bot",
+    "type": "sticker",
+    "sticker": {
+      "url": "https://example.com/sticker.webp"
+    }
+  }
+]
