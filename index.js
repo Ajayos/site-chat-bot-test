@@ -120,7 +120,9 @@ app.post("/api/media", upload.single("file"), (req, res) => {
     id: mediaId,
     filename: file.filename,
     type,
-    url: `${process.env.domain}/uploads/${file.filename}`, // static URL
+    url: `${
+      process.env.domain || `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+    }/uploads/${file.filename}`, // static URL
     ts: new Date().toISOString(),
   };
 
@@ -176,7 +178,8 @@ app.post("/api/config", (req, res) => {
     },
   };
 
-  domain_config.domain = process.env.domain;
+  domain_config.domain =
+    process.env.domain || `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
   res.json(domain_config);
 });
 
