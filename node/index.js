@@ -9,6 +9,8 @@ require("dotenv").config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+// json parser
+app.use(express.urlencoded({ extended: true }));
 
 // Storage config for multer
 const storage = multer.diskStorage({
@@ -128,21 +130,9 @@ app.post("/api/media", upload.single("file"), (req, res) => {
 
 // POST /api/media — handle media uploads
 app.post("/api/config", (req, res) => {
-  // Full host (may include port)
-  const fullHost = req.headers.host; // e.g., "example.com:3000"
-
-  // Just the hostname (no port)
-  const hostname = req.hostname; // e.g., "example.com"
-
-  // Protocol (needs trust proxy if behind a proxy)
-  const protocol = req.protocol; // "http" or "https"
-
-  // Build full domain with protocol
-  const domain = `${protocol}://${fullHost}`;
-
-  console.log({ fullHost, hostname, protocol, domain });
   // console.log(`🔧 Config update request received for domain: ${req_domain}`);
   var domain_from_web = req?.body?.domain || "";
+  console.log(`🔧 Config update request received for domain: ${req.body}`);
   if (!domain_from_web) {
     return res.status(400).json({ error: "Missing domain." });
   }

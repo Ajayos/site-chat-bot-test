@@ -25,6 +25,9 @@ function ChatShell() {
         const res = await fetch(`${API_URL}api/config`, {
           method: "POST",
           body: JSON.stringify({ domain: document.referrer }),
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         const data = await res.json();
 
