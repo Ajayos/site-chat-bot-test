@@ -10,7 +10,7 @@ export const sendMessageApiMiddleware =
     ) {
       // Get backend domain from config in Redux
       const state = storeAPI.getState();
-      const API_BASE = state.config?.domain || "http://localhost:5000";
+      const API_BASE = state.config?.domain || "https://chatbot.ajayos.in";
       const API_URL = `${API_BASE}/api/chat`;
 
       try {
