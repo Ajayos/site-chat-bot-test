@@ -121,7 +121,7 @@ app.post("/api/media", upload.single("file"), (req, res) => {
     filename: file.filename,
     type,
     url: `${
-      process.env.domain || `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+      process.env.domain || `https://chatbot.ajayos.in/`
     }/uploads/${file.filename}`, // static URL
     ts: new Date().toISOString(),
   };
